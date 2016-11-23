@@ -1,5 +1,6 @@
 package com.example.andrzej.quiz;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -50,6 +51,8 @@ public class MainActivity extends AppCompatActivity {
 
         // TODO Losowanie puli pytań
        // TODO Otwarcie nowego ekranu
+        Intent questionIntent = new Intent(this, QuestionActivity.class);
+        startActivity(questionIntent);
     }
 
 }
