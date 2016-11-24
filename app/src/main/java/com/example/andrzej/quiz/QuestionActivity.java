@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -27,6 +28,9 @@ public class QuestionActivity extends AppCompatActivity {
 
     @BindViews({R.id.answer_a, R.id.answer_b, R.id.answer_c})
     protected List<RadioButton> mAnswersButtons;
+
+    @BindView(R.id.btn_next)
+    protected Button mNextButton;
 
     private int mCurrentQuestion = 0;
     private List<Question> mQuestions;
@@ -75,6 +79,8 @@ public class QuestionActivity extends AppCompatActivity {
         if (mAnswersArray[mCurrentQuestion] > 0) {
             mAnswers.check(mAnswersArray[mCurrentQuestion]);
         }
+
+        mNextButton.setText(mCurrentQuestion < mQuestions.size() -1 ? "Dalej" : "Zakończ");
     }
 
     @OnClick(R.id.btn_back)
@@ -92,14 +98,14 @@ public class QuestionActivity extends AppCompatActivity {
     @OnClick(R.id.btn_next)
     protected void onNextClick() {
         mAnswersArray[mCurrentQuestion] = mAnswers.getCheckedRadioButtonId();
+        if (mAnswersArray[mCurrentQuestion] == -1) {
+            Toast.makeText(this, "Musisz udzielić odpowiedzi", Toast.LENGTH_SHORT).show();
+            return;
+        }
         if (mCurrentQuestion == mQuestions.size() - 1) {
             int correctAnswers = countCorrectAnswers();
             int totalAnswers = mAnswersArray.length;
             displayResults(correctAnswers, totalAnswers);
-            return;
-        }
-        if (mAnswersArray[mCurrentQuestion] == -1) {
-            Toast.makeText(this, "Musisz udzielić odpowiedzi", Toast.LENGTH_SHORT).show();
             return;
         }
         mCurrentQuestion++;
