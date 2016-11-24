@@ -1,6 +1,8 @@
 package com.example.andrzej.quiz;
 
+import android.content.DialogInterface;
 import android.os.Handler;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.RadioButton;
@@ -93,7 +95,7 @@ public class QuestionActivity extends AppCompatActivity {
         if (mCurrentQuestion == mQuestions.size() - 1) {
             int correctAnswers = countCorrectAnswers();
             int totalAnswers = mAnswersArray.length;
-            Toast.makeText(this, "Twój wynik to "+correctAnswers+" na "+totalAnswers, Toast.LENGTH_SHORT).show();
+            displayResults(correctAnswers, totalAnswers);
             return;
         }
         if (mAnswersArray[mCurrentQuestion] == -1) {
@@ -104,6 +106,21 @@ public class QuestionActivity extends AppCompatActivity {
         refreshQuestionView();
     }
 
+    private void displayResults(int correctAnswers, int totalAnswers) {
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle("Wynik Quizu")
+                .setCancelable(false)
+                .setMessage("Odpowiedziałeś poprawnie na " + correctAnswers + " pytań z " + totalAnswers)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                })
+                .create();
+        dialog.show();
+    }
+
 
     private int countCorrectAnswers() {
         int sum = 0;
@@ -112,7 +129,7 @@ public class QuestionActivity extends AppCompatActivity {
             Question question = mQuestions.get(i);
             int userAnswerId = mAnswersArray[i];
             int correctAnswerId = mAnswersButtons.get(question.getCorrectAnswer()).getId();
-            if (userAnswerId == correctAnswerId){
+            if (userAnswerId == correctAnswerId) {
                 sum++;
             }
         }
