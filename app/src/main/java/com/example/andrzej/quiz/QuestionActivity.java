@@ -48,6 +48,25 @@ public class QuestionActivity extends AppCompatActivity {
         refreshQuestionView();
     }
 
+
+    //zapisywanie odpowiedzi i pozycji pytań (stan Quizu) potzrebne przy obrocie
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        mAnswersArray[mCurrentQuestion] = mAnswers.getCheckedRadioButtonId();
+        outState.putInt("position", mCurrentQuestion);
+        outState.putIntArray("answers", mAnswersArray);
+    }
+
+    //wczytywanie stanu Quizu po obrocie ekranu
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        mCurrentQuestion = savedInstanceState.getInt("position");
+        mAnswersArray = savedInstanceState.getIntArray("answers");
+        refreshQuestionView();
+    }
+
     @Override
     public void onBackPressed() {
         onBackTapped();
