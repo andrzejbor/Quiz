@@ -1,5 +1,6 @@
 package com.example.andrzej.quiz;
 
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.RadioButton;
@@ -28,6 +29,7 @@ public class QuestionActivity extends AppCompatActivity {
     private int mCurrentQuestion = 0;
     private List<Question> mQuestions;
     private int[] mAnswersArray;
+    private boolean mFirstBackClicked = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +40,26 @@ public class QuestionActivity extends AppCompatActivity {
         mQuestions = (List<Question>) getIntent().getSerializableExtra("questions");
         mAnswersArray = new int[mQuestions.size()];
         refreshQuestionView();
+    }
+
+    @Override
+    public void onBackPressed() {
+        onBackTapped();
+    }
+
+    private void onBackTapped() {
+        if (!mFirstBackClicked) {
+            mFirstBackClicked = true;
+            Toast.makeText(this, "Kliknij ponownie by zakończyć Quiz", Toast.LENGTH_SHORT).show();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mFirstBackClicked = false;
+                }
+            }, 1000);
+        } else { // Drugie kliknięcie (w ciągu 1 s)
+            finish();
+        }
     }
 
     private void refreshQuestionView() {
@@ -56,7 +78,7 @@ public class QuestionActivity extends AppCompatActivity {
     @OnClick(R.id.btn_back)
     protected void onBackClick() {
         if (mCurrentQuestion == 0) {
-            finish();
+            onBackTapped();
             return;
         }
         //Zapisanie udzielonej odpowiedzi na aktualne pytanie
@@ -67,10 +89,13 @@ public class QuestionActivity extends AppCompatActivity {
 
     @OnClick(R.id.btn_next)
     protected void onNextClick() {
+        mAnswersArray[mCurrentQuestion] = mAnswers.getCheckedRadioButtonId();
         if (mCurrentQuestion == mQuestions.size() - 1) {
+            int correctAnswers = countCorrectAnswers();
+            int totalAnswers = mAnswersArray.length;
+            Toast.makeText(this, "Twój wynik to "+correctAnswers+" na "+totalAnswers, Toast.LENGTH_SHORT).show();
             return;
         }
-        mAnswersArray[mCurrentQuestion] = mAnswers.getCheckedRadioButtonId();
         if (mAnswersArray[mCurrentQuestion] == -1) {
             Toast.makeText(this, "Musisz udzielić odpowiedzi", Toast.LENGTH_SHORT).show();
             return;
@@ -78,4 +103,22 @@ public class QuestionActivity extends AppCompatActivity {
         mCurrentQuestion++;
         refreshQuestionView();
     }
+
+
+    private int countCorrectAnswers() {
+        int sum = 0;
+
+        for (int i = 0; i < mQuestions.size(); i++) {
+            Question question = mQuestions.get(i);
+            int userAnswerId = mAnswersArray[i];
+            int correctAnswerId = mAnswersButtons.get(question.getCorrectAnswer()).getId();
+            if (userAnswerId == correctAnswerId){
+                sum++;
+            }
+        }
+
+        return sum;
+    }
+
+
 }
