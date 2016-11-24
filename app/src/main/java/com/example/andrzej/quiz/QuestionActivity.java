@@ -132,18 +132,7 @@ public class QuestionActivity extends AppCompatActivity {
     }
 
     private void displayResults(int correctAnswers, int totalAnswers) {
-        AlertDialog dialog = new AlertDialog.Builder(this)
-                .setTitle("Wynik Quizu")
-                .setCancelable(false)
-                .setMessage("Odpowiedziałeś poprawnie na " + correctAnswers + " pytań z " + totalAnswers)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        finish();
-                    }
-                })
-                .create();
-        dialog.show();
+        QuizResultsDialog.newInstance(correctAnswers, totalAnswers).show(getSupportFragmentManager(), null);
     }
 
 
